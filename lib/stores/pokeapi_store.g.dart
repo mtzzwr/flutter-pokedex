@@ -40,6 +40,26 @@ mixin _$PokeApiStore on _PokeApiStore, Store {
   }
 
   @override
+  dynamic getPokemon({int index}) {
+    final _$actionInfo = _$_PokeApiStoreActionController.startAction();
+    try {
+      return super.getPokemon(index: index);
+    } finally {
+      _$_PokeApiStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  Widget getImage({String numero}) {
+    final _$actionInfo = _$_PokeApiStoreActionController.startAction();
+    try {
+      return super.getImage(numero: numero);
+    } finally {
+      _$_PokeApiStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     final string = 'pokeApi: ${pokeApi.toString()}';
     return '{$string}';

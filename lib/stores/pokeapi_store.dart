@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import '../model/pokeapi.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +23,21 @@ abstract class _PokeApiStore with Store {
     loadPokeApi().then((pokeList) {
       pokeApi = pokeList;
     });
+  }
+
+  @action
+  getPokemon({int index}){
+    return pokeApi.pokemon[index];
+  }
+
+  @action
+  Widget getImage({String numero}){
+    return CachedNetworkImage(
+      placeholder: (context, url) => new Container(
+        color: Colors.transparent,
+      ),
+      imageUrl: 'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$numero.png',
+    );
   }
 
   Future<PokeApi> loadPokeApi() async {

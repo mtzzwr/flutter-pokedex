@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokedex/model/pokeapi.dart';
+import 'package:pokedex/pages/homepage/widgets/poke_item.dart';
 import '../../consts/consts_app.dart';
 import './widgets/app_bar_home.dart';
 import '../../stores/pokeapi_store.dart';
@@ -52,13 +54,47 @@ class _HomePageState extends State<HomePage> {
                       builder: (BuildContext context) {
                         PokeApi _pokeApi = pokeApiStore.pokeApi;
                         return (_pokeApi != null)
-                            ? ListView.builder(
-                                itemCount: _pokeApi.pokemon.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                      title:
-                                          Text(_pokeApi.pokemon[index].name));
-                                },
+                            ? AnimationLimiter(
+                                child: GridView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  padding: EdgeInsets.all(12),
+                                  addAutomaticKeepAlives: true,
+                                  gridDelegate:
+                                      new SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  itemCount:
+                                      pokeApiStore.pokeApi.pokemon.length,
+                                  itemBuilder: (context, index) {
+                                    Pokemon pokemon =
+                                        pokeApiStore.getPokemon(index: index);
+                                    return AnimationConfiguration.staggeredGrid(
+                                      position: index,
+                                      duration:
+                                          const Duration(milliseconds: 375),
+                                      columnCount: 2,
+                                      child: ScaleAnimation(
+                                        child: GestureDetector(
+                                          child: PokeItem(
+                                            index: index,
+                                            types: pokemon.type,
+                                            name: pokemon.name,
+                                            num: pokemon.num,
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      Container() /*PokeDetailPage(index: index)*/,
+                                                  fullscreenDialog: true,
+                                                ));
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               )
                             : Center(
                                 child: CircularProgressIndicator(),
